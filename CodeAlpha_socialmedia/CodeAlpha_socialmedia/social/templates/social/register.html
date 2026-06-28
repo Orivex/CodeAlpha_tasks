@@ -1,0 +1,22 @@
+{% extends 'social/base.html' %}
+{% block title %}Register – SocialHub{% endblock %}
+{% block content %}
+<div class="auth-card">
+  <div class="auth-logo">SocialHub</div>
+  <p class="auth-tagline">Create your account today.</p>
+  <form method="POST" class="auth-form">
+    {% csrf_token %}
+    {% for field in form %}
+      <div class="form-group">
+        <label class="form-label">{{ field.label }}</label>
+        {{ field }}
+        {% if field.errors %}
+          <span class="form-error">{{ field.errors.0 }}</span>
+        {% endif %}
+      </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary btn-full">Create Account</button>
+  </form>
+  <p class="auth-switch">Already have an account? <a href="{% url 'login' %}">Log In</a></p>
+</div>
+{% endblock %}

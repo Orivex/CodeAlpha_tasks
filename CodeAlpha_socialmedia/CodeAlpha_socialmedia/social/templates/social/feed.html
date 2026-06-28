@@ -1,0 +1,79 @@
+{% extends 'social/base.html' %}
+{% block title %}Feed – SocialHub{% endblock %}
+{% load static %}
+{% block content %}
+<div class="feed-layout">
+  <!-- Left: Post Form + Posts -->
+  <div class="feed-main">
+    <!-- Create Post -->
+    <div class="card create-post-card">
+      <div class="create-post-header">
+        {% if user.profile.avatar %}
+          <img src="{{ user.profile.avatar.url }}" class="avatar avatar-md" alt="">
+        {% else %}
+          <div class="avatar avatar-md avatar-placeholder">{{ user.username|first|upper }}</div>
+        {% endif %}
+        <form method="POST" enctype="multipart/form-data" class="create-post-form" id="postForm">
+          {% csrf_token %}
+          {{ form.content }}
+          <div class="post-actions-bar">
+            <label class="btn btn-ghost btn-sm" for="id_image">📷 Photo</label>
+            {{ form.image }}
+            <button type="submit" class="btn btn-primary btn-sm">Post</button>
+          </div>
+          <div id="image-preview-container"></div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Posts Feed -->
+    {% for post in posts %}
+      {% include 'social/partials/post_card.html' %}
+    {% empty %}
+      <div class="empty-state card">
+        <div class="empty-icon">🌱</div>
+        <h3>Your feed is empty</h3>
+        <p>Follow some people to see their posts here, or <a href="{% url 'search' %}">discover users</a>.</p>
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- Right: Suggestions -->
+  <div class="feed-sidebar">
+    <div class="card sidebar-card">
+      <div class="sidebar-profile">
+        <a href="{% url 'profile' user.username %}">
+          {% if user.profile.avatar %}
+            <img src="{{ user.profile.avatar.url }}" class="avatar avatar-lg" alt="">
+          {% else %}
+            <div class="avatar avatar-lg avatar-placeholder">{{ user.username|first|upper }}</div>
+          {% endif %}
+        </a>
+        <div>
+          <a href="{% url 'profile' user.username %}" class="username-link">{{ user.username }}</a>
+          <p class="text-muted text-sm">{{ user.first_name }} {{ user.last_name }}</p>
+        </div>
+      </div>
+    </div>
+
+    {% if suggested %}
+    <div class="card sidebar-card">
+      <h4 class="sidebar-title">Suggested for you</h4>
+      {% for sug in suggested %}
+        <div class="suggestion-item">
+          <a href="{% url 'profile' sug.username %}" class="suggestion-user">
+            {% if sug.profile.avatar %}
+              <img src="{{ sug.profile.avatar.url }}" class="avatar avatar-sm" alt="">
+            {% else %}
+              <div class="avatar avatar-sm avatar-placeholder">{{ sug.username|first|upper }}</div>
+            {% endif %}
+            <span class="username-link">{{ sug.username }}</span>
+          </a>
+          <button class="btn btn-outline btn-xs follow-btn" data-username="{{ sug.username }}" data-following="false">Follow</button>
+        </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

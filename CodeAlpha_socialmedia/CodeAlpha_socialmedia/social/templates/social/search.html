@@ -1,0 +1,51 @@
+{% extends 'social/base.html' %}
+{% block title %}Search – SocialHub{% endblock %}
+{% block content %}
+<div class="search-layout">
+  <div class="card search-hero">
+    <form method="GET" action="{% url 'search' %}" class="search-form-big">
+      <input type="text" name="q" value="{{ query }}" placeholder="Search for people or posts..." class="search-input-big">
+      <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+  </div>
+
+  {% if query %}
+    {% if users %}
+      <div class="search-section">
+        <h3 class="section-title">People</h3>
+        <div class="users-grid">
+          {% for u in users %}
+            <div class="card user-card">
+              <a href="{% url 'profile' u.username %}">
+                {% if u.profile.avatar %}
+                  <img src="{{ u.profile.avatar.url }}" class="avatar avatar-lg" alt="">
+                {% else %}
+                  <div class="avatar avatar-lg avatar-placeholder">{{ u.username|first|upper }}</div>
+                {% endif %}
+                <p class="username-link">{{ u.username }}</p>
+              </a>
+              <button class="btn btn-outline btn-xs follow-btn" data-username="{{ u.username }}" data-following="false">Follow</button>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if posts %}
+      <div class="search-section">
+        <h3 class="section-title">Posts</h3>
+        {% for post in posts %}
+          {% include 'social/partials/post_card.html' %}
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% if not users and not posts %}
+      <div class="empty-state card">
+        <div class="empty-icon">🔍</div>
+        <p>No results for "{{ query }}"</p>
+      </div>
+    {% endif %}
+  {% endif %}
+</div>
+{% endblock %}

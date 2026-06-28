@@ -1,0 +1,46 @@
+{% load static %}
+<div class="card post-card" id="post-{{ post.id }}">
+  <div class="post-header">
+    <a href="{% url 'profile' post.author.username %}" class="post-author">
+      {% if post.author.profile.avatar %}
+        <img src="{{ post.author.profile.avatar.url }}" class="avatar avatar-md" alt="">
+      {% else %}
+        <div class="avatar avatar-md avatar-placeholder">{{ post.author.username|first|upper }}</div>
+      {% endif %}
+      <div>
+        <span class="username-link">{{ post.author.username }}</span>
+        <span class="post-time text-muted text-sm">{{ post.created_at|timesince }} ago</span>
+      </div>
+    </a>
+    {% if post.author == user %}
+      <a href="{% url 'delete_post' post.id %}" class="btn-icon delete-post-btn" title="Delete post" onclick="return confirm('Delete this post?')">🗑</a>
+    {% endif %}
+  </div>
+
+  <div class="post-content">
+    <p>{{ post.content }}</p>
+    {% if post.image %}
+      <img src="{{ post.image.url }}" class="post-image" alt="Post image">
+    {% endif %}
+  </div>
+
+  <div class="post-footer">
+    <button class="btn-reaction like-btn {% if post.liked_by_user %}liked{% endif %}" 
+            data-post-id="{{ post.id }}" data-liked="{{ post.liked_by_user|yesno:'true,false' }}">
+      <span class="like-icon">{% if post.liked_by_user %}❤️{% else %}🤍{% endif %}</span>
+      <span class="like-count">{{ post.get_likes_count }}</span>
+    </button>
+    <a href="{% url 'post_detail' post.id %}" class="btn-reaction">
+      💬 <span>{{ post.get_comments_count }}</span>
+    </a>
+  </div>
+
+  <!-- Quick comment box -->
+  <div class="quick-comment">
+    <form class="comment-quick-form" data-post-id="{{ post.id }}">
+      {% csrf_token %}
+      <input type="text" class="comment-input" name="content" placeholder="Add a comment...">
+      <button type="submit" class="btn btn-ghost btn-xs">Post</button>
+    </form>
+  </div>
+</div>

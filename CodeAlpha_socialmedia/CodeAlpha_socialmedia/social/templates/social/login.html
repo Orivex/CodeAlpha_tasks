@@ -1,0 +1,22 @@
+{% extends 'social/base.html' %}
+{% block title %}Login – SocialHub{% endblock %}
+{% block content %}
+<div class="auth-card">
+  <div class="auth-logo">SocialHub</div>
+  <p class="auth-tagline">Connect with people you care about.</p>
+  <form method="POST" class="auth-form">
+    {% csrf_token %}
+    {% for field in form %}
+      <div class="form-group">
+        <label class="form-label">{{ field.label }}</label>
+        {{ field }}
+        {% if field.errors %}
+          <span class="form-error">{{ field.errors.0 }}</span>
+        {% endif %}
+      </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary btn-full">Log In</button>
+  </form>
+  <p class="auth-switch">Don't have an account? <a href="{% url 'register' %}">Sign Up</a></p>
+</div>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends 'social/base.html' %}
+{% block title %}{{ tab|capfirst }} – SocialHub{% endblock %}
+{% block content %}
+<div class="form-page">
+  <div class="card form-card">
+    <div class="followers-tabs">
+      <a href="{% url 'followers' profile_user.username %}" class="tab {% if tab == 'followers' %}active{% endif %}">Followers</a>
+      <a href="{% url 'following' profile_user.username %}" class="tab {% if tab == 'following' %}active{% endif %}">Following</a>
+    </div>
+    <div class="user-list">
+      {% if tab == 'followers' %}
+        {% for f in followers %}
+          <div class="user-list-item">
+            <a href="{% url 'profile' f.follower.username %}" class="user-list-link">
+              {% if f.follower.profile.avatar %}
+                <img src="{{ f.follower.profile.avatar.url }}" class="avatar avatar-sm" alt="">
+              {% else %}
+                <div class="avatar avatar-sm avatar-placeholder">{{ f.follower.username|first|upper }}</div>
+              {% endif %}
+              <span class="username-link">{{ f.follower.username }}</span>
+            </a>
+          </div>
+        {% empty %}
+          <p class="text-muted">No followers yet.</p>
+        {% endfor %}
+      {% else %}
+        {% for f in following %}
+          <div class="user-list-item">
+            <a href="{% url 'profile' f.following.username %}" class="user-list-link">
+              {% if f.following.profile.avatar %}
+                <img src="{{ f.following.profile.avatar.url }}" class="avatar avatar-sm" alt="">
+              {% else %}
+                <div class="avatar avatar-sm avatar-placeholder">{{ f.following.username|first|upper }}</div>
+              {% endif %}
+              <span class="username-link">{{ f.following.username }}</span>
+            </a>
+          </div>
+        {% empty %}
+          <p class="text-muted">Not following anyone yet.</p>
+        {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

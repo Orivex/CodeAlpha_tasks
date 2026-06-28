@@ -1,0 +1,39 @@
+{% extends 'social/base.html' %}
+{% block title %}Post – SocialHub{% endblock %}
+{% block content %}
+<div class="detail-layout">
+  <div class="detail-main">
+    {% include 'social/partials/post_card.html' %}
+
+    <div class="card comments-card">
+      <h3 class="comments-title">Comments ({{ comments.count }})</h3>
+      <div class="comments-list" id="commentsList">
+        {% for comment in comments %}
+          <div class="comment-item">
+            <a href="{% url 'profile' comment.author.username %}">
+              {% if comment.author.profile.avatar %}
+                <img src="{{ comment.author.profile.avatar.url }}" class="avatar avatar-sm" alt="">
+              {% else %}
+                <div class="avatar avatar-sm avatar-placeholder">{{ comment.author.username|first|upper }}</div>
+              {% endif %}
+            </a>
+            <div class="comment-body">
+              <span class="comment-author">{{ comment.author.username }}</span>
+              <p class="comment-text">{{ comment.content }}</p>
+              <span class="comment-time text-muted text-sm">{{ comment.created_at|timesince }} ago</span>
+            </div>
+          </div>
+        {% empty %}
+          <p class="text-muted" id="noComments">No comments yet. Be the first!</p>
+        {% endfor %}
+      </div>
+
+      <form method="POST" id="commentForm" class="comment-form-full">
+        {% csrf_token %}
+        {{ form.content }}
+        <button type="submit" class="btn btn-primary btn-sm">Comment</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

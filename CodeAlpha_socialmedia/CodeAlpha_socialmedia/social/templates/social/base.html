@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}SocialHub{% endblock %}</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'social/css/main.css' %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+{% if user.is_authenticated %}
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="{% url 'feed' %}" class="nav-logo">SocialHub</a>
+    <form method="GET" action="{% url 'search' %}" class="nav-search">
+      <input type="text" name="q" placeholder="Search users or posts..." value="{{ request.GET.q|default:'' }}">
+      <button type="submit">🔍</button>
+    </form>
+    <div class="nav-links">
+      <a href="{% url 'feed' %}" class="nav-link {% if request.resolver_match.url_name == 'feed' %}active{% endif %}">🏠 Feed</a>
+      <a href="{% url 'profile' user.username %}" class="nav-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
+        {% if user.profile.avatar %}
+          <img src="{{ user.profile.avatar.url }}" class="nav-avatar" alt="">
+        {% else %}
+          <span class="nav-avatar-placeholder">{{ user.username|first|upper }}</span>
+        {% endif %}
+        {{ user.username }}
+      </a>
+      <a href="{% url 'logout' %}" class="nav-link nav-logout">Logout</a>
+    </div>
+  </div>
+</nav>
+{% endif %}
+
+<main class="main-content {% if not user.is_authenticated %}auth-page{% endif %}">
+  {% if messages %}
+    <div class="messages-container">
+      {% for message in messages %}
+        <div class="message message-{{ message.tags }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+  {% block content %}{% endblock %}
+</main>
+
+<script src="{% static 'social/js/main.js' %}"></script>
+</body>
+</html>
