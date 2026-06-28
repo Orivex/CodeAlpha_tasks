@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}My Orders — ShopZen{% endblock %}
+{% block content %}
+
+<div class="page-header">
+    <h1>My Orders</h1>
+</div>
+
+<div class="orders-container">
+    {% for order in orders %}
+    <div class="order-card">
+        <div class="order-header">
+            <div>
+                <strong>Order #{{ order.id }}</strong>
+                <span class="order-date">{{ order.created_at|date:"M d, Y" }}</span>
+            </div>
+            <span class="status-badge status-{{ order.status }}">{{ order.get_status_display }}</span>
+        </div>
+        <div class="order-items-preview">
+            {% for item in order.items.all %}
+            <span>{{ item.product.name }} (×{{ item.quantity }})</span>{% if not forloop.last %}, {% endif %}
+            {% endfor %}
+        </div>
+        <div class="order-footer">
+            <strong>${{ order.total_amount }}</strong>
+            <a href="/orders/{{ order.id }}/" class="btn-outline small">View Details</a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="empty-state">
+        <div class="empty-icon">📦</div>
+        <h3>No orders yet</h3>
+        <a href="/products/" class="btn-primary">Start Shopping</a>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

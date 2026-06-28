@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% block title %}ShopZen — Home{% endblock %}
+{% block content %}
+
+<!-- Hero -->
+<section class="hero">
+    <div class="hero-content">
+        <h1>Find What You<br><span>Love</span></h1>
+        <p>Discover thousands of products with fast delivery and easy returns.</p>
+        <a href="/products/" class="btn-hero">Shop Now →</a>
+    </div>
+    <div class="hero-image">
+        <div class="hero-blob"></div>
+        <div class="hero-stats">
+            <div class="stat"><strong>10K+</strong><span>Products</span></div>
+            <div class="stat"><strong>50K+</strong><span>Customers</span></div>
+            <div class="stat"><strong>4.9★</strong><span>Rating</span></div>
+        </div>
+    </div>
+</section>
+
+<!-- Categories -->
+{% if categories %}
+<section class="section">
+    <div class="section-header">
+        <h2>Shop by Category</h2>
+    </div>
+    <div class="categories-grid">
+        {% for cat in categories %}
+        <a href="/products/?category={{ cat.slug }}" class="category-card">
+            <div class="category-icon">🏷️</div>
+            <span>{{ cat.name }}</span>
+        </a>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<!-- Featured Products -->
+<section class="section section-alt">
+    <div class="section-header">
+        <h2>Featured Products</h2>
+        <a href="/products/" class="view-all">View All →</a>
+    </div>
+    <div class="product-grid">
+        {% for product in featured %}
+        <div class="product-card">
+            <a href="/products/{{ product.slug }}/">
+                <div class="product-image">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                    {% else %}
+                        <div class="product-placeholder">📦</div>
+                    {% endif %}
+                    {% if not product.in_stock %}
+                    <span class="badge-out">Out of Stock</span>
+                    {% endif %}
+                </div>
+            </a>
+            <div class="product-info">
+                <span class="product-category">{{ product.category.name }}</span>
+                <h3><a href="/products/{{ product.slug }}/">{{ product.name }}</a></h3>
+                <div class="product-footer">
+                    <strong class="product-price">${{ product.price }}</strong>
+                    {% if product.in_stock %}
+                    <a href="/cart/add/{{ product.id }}/" class="btn-add-cart">Add to Cart</a>
+                    {% else %}
+                    <span class="btn-disabled">Out of Stock</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="empty-state">No products yet. <a href="/admin/">Add some in admin →</a></p>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Value props -->
+<section class="section">
+    <div class="value-props">
+        <div class="value-prop">
+            <div class="vp-icon">🚚</div>
+            <h3>Free Shipping</h3>
+            <p>On orders over $50</p>
+        </div>
+        <div class="value-prop">
+            <div class="vp-icon">↩️</div>
+            <h3>Easy Returns</h3>
+            <p>30-day return policy</p>
+        </div>
+        <div class="value-prop">
+            <div class="vp-icon">🔒</div>
+            <h3>Secure Checkout</h3>
+            <p>Your data is protected</p>
+        </div>
+        <div class="value-prop">
+            <div class="vp-icon">💬</div>
+            <h3>24/7 Support</h3>
+            <p>Always here to help</p>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

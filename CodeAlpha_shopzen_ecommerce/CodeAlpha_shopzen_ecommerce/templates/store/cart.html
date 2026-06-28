@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block title %}Cart — ShopZen{% endblock %}
+{% block content %}
+
+<div class="page-header">
+    <h1>Shopping Cart</h1>
+</div>
+
+<div class="cart-layout">
+    {% if cart_items %}
+    <div class="cart-items">
+        {% for item in cart_items %}
+        <div class="cart-item">
+            <div class="cart-item-image">
+                {% if item.product.image %}
+                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+                {% else %}
+                <div class="product-placeholder small">📦</div>
+                {% endif %}
+            </div>
+            <div class="cart-item-info">
+                <h3><a href="/products/{{ item.product.slug }}/">{{ item.product.name }}</a></h3>
+                <p class="cart-item-category">{{ item.product.category.name }}</p>
+                <span class="cart-item-price">${{ item.product.price }} each</span>
+            </div>
+            <div class="cart-item-controls">
+                <form method="POST" action="/cart/update/{{ item.product.id }}/" class="qty-form">
+                    {% csrf_token %}
+                    <button type="submit" name="quantity" value="{{ item.quantity|add:'-1' }}" class="qty-btn">−</button>
+                    <span class="qty-display">{{ item.quantity }}</span>
+                    <button type="submit" name="quantity" value="{{ item.quantity|add:'1' }}" class="qty-btn">+</button>
+                </form>
+                <strong class="cart-subtotal">${{ item.subtotal }}</strong>
+                <a href="/cart/remove/{{ item.product.id }}/" class="remove-btn" title="Remove">🗑</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="cart-summary">
+        <h2>Order Summary</h2>
+        <div class="summary-row">
+            <span>Subtotal</span>
+            <span>${{ total }}</span>
+        </div>
+        <div class="summary-row">
+            <span>Shipping</span>
+            <span>{% if total >= 50 %}Free{% else %}$4.99{% endif %}</span>
+        </div>
+        <div class="summary-row total">
+            <strong>Total</strong>
+            <strong>${{ total }}</strong>
+        </div>
+        {% if user.is_authenticated %}
+        <a href="/checkout/" class="btn-hero full-width">Proceed to Checkout →</a>
+        {% else %}
+        <a href="/login/?next=/checkout/" class="btn-hero full-width">Login to Checkout →</a>
+        {% endif %}
+        <a href="/products/" class="btn-outline full-width" style="margin-top:0.75rem;">Continue Shopping</a>
+    </div>
+
+    {% else %}
+    <div class="empty-cart">
+        <div class="empty-icon">🛒</div>
+        <h2>Your cart is empty</h2>
+        <p>Looks like you haven't added anything yet.</p>
+        <a href="/products/" class="btn-hero">Start Shopping</a>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Profile — ShopZen{% endblock %}
+{% block content %}
+
+<div class="page-header">
+    <h1>My Profile</h1>
+</div>
+
+<div class="profile-layout">
+    <div class="profile-card">
+        <div class="profile-avatar">{{ user.username|first|upper }}</div>
+        <h2>{{ user.get_full_name|default:user.username }}</h2>
+        <p>{{ user.email }}</p>
+        <p class="profile-joined">Member since {{ user.date_joined|date:"M Y" }}</p>
+        <a href="/orders/" class="btn-primary full-width" style="margin-top:1.5rem;">View All Orders</a>
+    </div>
+
+    <div class="profile-orders">
+        <h2>Recent Orders</h2>
+        {% for order in orders %}
+        <div class="order-card">
+            <div class="order-header">
+                <strong>Order #{{ order.id }}</strong>
+                <span class="status-badge status-{{ order.status }}">{{ order.get_status_display }}</span>
+            </div>
+            <div class="order-footer">
+                <span>${{ order.total_amount }} · {{ order.created_at|date:"M d" }}</span>
+                <a href="/orders/{{ order.id }}/" class="btn-outline small">View</a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="empty-state">
+            <p>No orders yet.</p>
+            <a href="/products/" class="btn-primary">Shop Now</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

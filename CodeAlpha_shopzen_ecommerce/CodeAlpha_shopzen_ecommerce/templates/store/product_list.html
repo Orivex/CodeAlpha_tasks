@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block title %}All Products — ShopZen{% endblock %}
+{% block content %}
+
+<div class="page-header">
+    <h1>{% if search %}Results for "{{ search }}"{% elif selected_category %}{{ selected_category|title }}{% else %}All Products{% endif %}</h1>
+    <p>{{ products|length }} product{{ products|length|pluralize }} found</p>
+</div>
+
+<div class="shop-layout">
+    <!-- Sidebar filters -->
+    <aside class="sidebar">
+        <h3>Categories</h3>
+        <ul class="filter-list">
+            <li><a href="/products/" class="{% if not selected_category %}active{% endif %}">All</a></li>
+            {% for cat in categories %}
+            <li><a href="/products/?category={{ cat.slug }}" class="{% if selected_category == cat.slug %}active{% endif %}">{{ cat.name }}</a></li>
+            {% endfor %}
+        </ul>
+
+        <h3>Sort By</h3>
+        <ul class="filter-list">
+            <li><a href="?{% if selected_category %}category={{ selected_category }}&{% endif %}sort=newest" class="{% if sort == 'newest' %}active{% endif %}">Newest</a></li>
+            <li><a href="?{% if selected_category %}category={{ selected_category }}&{% endif %}sort=price_asc" class="{% if sort == 'price_asc' %}active{% endif %}">Price: Low to High</a></li>
+            <li><a href="?{% if selected_category %}category={{ selected_category }}&{% endif %}sort=price_desc" class="{% if sort == 'price_desc' %}active{% endif %}">Price: High to Low</a></li>
+        </ul>
+    </aside>
+
+    <!-- Product grid -->
+    <div class="product-grid-main">
+        <div class="product-grid">
+            {% for product in products %}
+            <div class="product-card">
+                <a href="/products/{{ product.slug }}/">
+                    <div class="product-image">
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                        {% else %}
+                            <div class="product-placeholder">📦</div>
+                        {% endif %}
+                        {% if not product.in_stock %}
+                        <span class="badge-out">Out of Stock</span>
+                        {% endif %}
+                    </div>
+                </a>
+                <div class="product-info">
+                    <span class="product-category">{{ product.category.name }}</span>
+                    <h3><a href="/products/{{ product.slug }}/">{{ product.name }}</a></h3>
+                    <p class="product-desc">{{ product.description|truncatewords:12 }}</p>
+                    <div class="product-footer">
+                        <strong class="product-price">${{ product.price }}</strong>
+                        {% if product.in_stock %}
+                        <a href="/cart/add/{{ product.id }}/" class="btn-add-cart">Add to Cart</a>
+                        {% else %}
+                        <span class="btn-disabled">Out of Stock</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="empty-state">
+                <div class="empty-icon">🔍</div>
+                <h3>No products found</h3>
+                <p>Try a different search or category.</p>
+                <a href="/products/" class="btn-primary">Clear filters</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

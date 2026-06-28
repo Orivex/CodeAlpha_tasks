@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Order #{{ order.id }} — ShopZen{% endblock %}
+{% block content %}
+
+<div class="page-header">
+    <h1>Order #{{ order.id }}</h1>
+    <a href="/orders/" class="btn-outline">← Back to Orders</a>
+</div>
+
+<div class="order-detail-layout">
+    <div class="order-detail-main">
+        <div class="form-section">
+            <h2>Items</h2>
+            {% for item in order.items.all %}
+            <div class="cart-item">
+                <div class="cart-item-image">
+                    {% if item.product.image %}<img src="{{ item.product.image.url }}" alt="">{% else %}<div class="product-placeholder small">📦</div>{% endif %}
+                </div>
+                <div class="cart-item-info">
+                    <h3>{{ item.product.name }}</h3>
+                    <span>${{ item.price }} × {{ item.quantity }}</span>
+                </div>
+                <strong>${{ item.subtotal }}</strong>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="order-detail-sidebar">
+        <div class="form-section">
+            <h2>Order Info</h2>
+            <div class="detail-row"><span>Status</span><span class="status-badge status-{{ order.status }}">{{ order.get_status_display }}</span></div>
+            <div class="detail-row"><span>Date</span><span>{{ order.created_at|date:"M d, Y H:i" }}</span></div>
+            <div class="detail-row"><span>Total</span><strong>${{ order.total_amount }}</strong></div>
+        </div>
+        <div class="form-section">
+            <h2>Ship To</h2>
+            <p>{{ order.full_name }}<br>{{ order.address }}<br>{{ order.city }}, {{ order.postal_code }}<br>{{ order.country }}</p>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,80 @@
+A basic e-commerce website built using Django.
+
+## Features
+
+- User Registration & Login
+- Product Listing
+- Product Details Page
+- Shopping Cart
+- Checkout System
+- Order History
+- Product Reviews
+- Admin Dashboard
+
+## Tech Stack
+
+- Python
+- Django
+- HTML
+- CSS
+- JavaScript
+
+## Installation
+
+### 1. Clone Repository
+
+```bash
+git clone https://github.com/your-username/shopzen.git
+cd shopzen
+```
+
+### 2. Create Virtual Environment
+
+```bash
+python -m venv venv
+```
+
+
+### 3. Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Apply Migrations
+
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+### 5. Load Sample Data (Optional)
+
+```bash
+python manage.py seed_data
+```
+
+### 6. Create Superuser
+
+```bash
+python manage.py createsuperuser
+```
+
+### 7. Run Server
+
+```bash
+python manage.py runserver
+```
+
+Open:
+
+```
+http://127.0.0.1:8000/
+```
+
+Admin Panel:
+
+```
+http://127.0.0.1:8000/admin/
+```
+

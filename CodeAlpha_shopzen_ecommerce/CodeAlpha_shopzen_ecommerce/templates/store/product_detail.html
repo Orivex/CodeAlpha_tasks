@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% block title %}{{ product.name }} — ShopZen{% endblock %}
+{% block content %}
+
+<div class="product-detail-container">
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb">
+        <a href="/">Home</a> / <a href="/products/">Products</a> / <a href="/products/?category={{ product.category.slug }}">{{ product.category.name }}</a> / {{ product.name }}
+    </nav>
+
+    <div class="product-detail">
+        <!-- Image -->
+        <div class="detail-image">
+            {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}">
+            {% else %}
+                <div class="detail-placeholder">📦</div>
+            {% endif %}
+        </div>
+
+        <!-- Info -->
+        <div class="detail-info">
+            <span class="product-category">{{ product.category.name }}</span>
+            <h1>{{ product.name }}</h1>
+
+            {% if avg_rating %}
+            <div class="rating-display">
+                {% for i in "12345" %}
+                <span class="star {% if forloop.counter <= avg_rating %}filled{% endif %}">★</span>
+                {% endfor %}
+                <span class="rating-count">({{ reviews|length }} review{{ reviews|length|pluralize }})</span>
+            </div>
+            {% endif %}
+
+            <div class="detail-price">${{ product.price }}</div>
+
+            <p class="detail-description">{{ product.description }}</p>
+
+            <div class="detail-meta">
+                <span class="{% if product.in_stock %}badge-in-stock{% else %}badge-out{% endif %}">
+                    {% if product.in_stock %}✓ In Stock ({{ product.stock }} left){% else %}✗ Out of Stock{% endif %}
+                </span>
+            </div>
+
+            {% if product.in_stock %}
+            <div class="detail-actions">
+                <a href="/cart/add/{{ product.id }}/" class="btn-hero">Add to Cart 🛒</a>
+                {% if user.is_authenticated %}
+                <a href="/checkout/" class="btn-outline-dark" onclick="addAndCheckout(event, {{ product.id }})">Buy Now</a>
+                {% else %}
+                <a href="/login/?next=/products/{{ product.slug }}/" class="btn-outline-dark">Login to Buy</a>
+                {% endif %}
+            </div>
+            {% else %}
+            <button class="btn-hero disabled" disabled>Out of Stock</button>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Reviews -->
+    <div class="reviews-section">
+        <h2>Customer Reviews</h2>
+
+        {% if user.is_authenticated %}
+        <div class="review-form">
+            <h3>Write a Review</h3>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label>Rating</label>
+                    {{ review_form.rating }}
+                </div>
+                <div class="form-group">
+                    <label>Comment</label>
+                    {{ review_form.comment }}
+                </div>
+                <button type="submit" class="btn-primary">Submit Review</button>
+            </form>
+        </div>
+        {% else %}
+        <p class="login-prompt"><a href="/login/">Login</a> to leave a review.</p>
+        {% endif %}
+
+        <div class="reviews-list">
+            {% for review in reviews %}
+            <div class="review-card">
+                <div class="review-header">
+                    <strong>{{ review.user.username }}</strong>
+                    <div class="stars">
+                        {% for i in "12345" %}
+                        <span class="star {% if forloop.counter <= review.rating %}filled{% endif %}">★</span>
+                        {% endfor %}
+                    </div>
+                    <span class="review-date">{{ review.created_at|date:"M d, Y" }}</span>
+                </div>
+                <p>{{ review.comment }}</p>
+            </div>
+            {% empty %}
+            <p class="empty-state">No reviews yet. Be the first!</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Related Products -->
+    {% if related %}
+    <div class="related-section">
+        <h2>You Might Also Like</h2>
+        <div class="product-grid">
+            {% for p in related %}
+            <div class="product-card">
+                <a href="/products/{{ p.slug }}/">
+                    <div class="product-image">
+                        {% if p.image %}<img src="{{ p.image.url }}" alt="{{ p.name }}">{% else %}<div class="product-placeholder">📦</div>{% endif %}
+                    </div>
+                </a>
+                <div class="product-info">
+                    <h3><a href="/products/{{ p.slug }}/">{{ p.name }}</a></h3>
+                    <div class="product-footer">
+                        <strong class="product-price">${{ p.price }}</strong>
+                        <a href="/cart/add/{{ p.id }}/" class="btn-add-cart">Add</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+function addAndCheckout(e, productId) {
+    e.preventDefault();
+    fetch(`/cart/add/${productId}/`).then(() => window.location.href = '/checkout/');
+}
+</script>
+{% endblock %}

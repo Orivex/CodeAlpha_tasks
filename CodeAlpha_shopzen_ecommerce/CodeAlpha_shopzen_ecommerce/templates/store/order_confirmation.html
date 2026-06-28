@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}Order Confirmed — ShopZen{% endblock %}
+{% block content %}
+
+<div class="confirmation-container">
+    <div class="confirmation-card">
+        <div class="confirmation-icon">✅</div>
+        <h1>Order Placed!</h1>
+        <p>Thank you, <strong>{{ order.full_name }}</strong>! Your order has been received.</p>
+
+        <div class="order-number">Order #{{ order.id }}</div>
+
+        <div class="confirmation-details">
+            <div class="detail-row">
+                <span>Status</span>
+                <span class="status-badge">{{ order.get_status_display }}</span>
+            </div>
+            <div class="detail-row">
+                <span>Email</span>
+                <span>{{ order.email }}</span>
+            </div>
+            <div class="detail-row">
+                <span>Ship to</span>
+                <span>{{ order.address }}, {{ order.city }}</span>
+            </div>
+            <div class="detail-row">
+                <span>Total</span>
+                <strong>${{ order.total_amount }}</strong>
+            </div>
+        </div>
+
+        <div class="confirmation-items">
+            <h3>Items Ordered</h3>
+            {% for item in order.items.all %}
+            <div class="summary-item">
+                <span>{{ item.product.name }} × {{ item.quantity }}</span>
+                <span>${{ item.subtotal }}</span>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="confirmation-actions">
+            <a href="/orders/" class="btn-primary">View All Orders</a>
+            <a href="/products/" class="btn-outline">Keep Shopping</a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
